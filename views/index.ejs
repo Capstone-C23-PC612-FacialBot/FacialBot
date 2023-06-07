@@ -1,38 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latihan file upload with node.js</title>
-  <!-- Compiled and minified CSS - Materialize CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <title>Login, Register, and Upload</title>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
-
   <div class="container">
-    <h1>Upload File</h1>
-    <%= typeof msg != 'undefined' ? msg : '' %>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-      <div class="file-field input-field">
-        <div class="btn grey">
-          <span>File</span>
-          <input name="faceImage" type="file">
+    <% if (!user) { %>
+    <div class="form-container">
+      <h2>Login</h2>
+      <form action="/api/login" method="POST">
+        <div class="form-group">
+          <label for="login-identifier">Username or Email:</label>
+          <input type="text" id="login-identifier" name="identifier" required>
         </div>
-        <div class="file-path-wrapper">
-          <input class="file-path validate" type="text">
+        <div class="form-group">
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" name="password" required>
         </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+    <div class="form-container">
+      <h2>Register</h2>
+      <form action="/api/register" method="POST">
+        <div class="form-group">
+          <label for="register-username">Username:</label>
+          <input type="text" id="register-username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email:</label>
+          <input type="email" id="register-email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password:</label>
+          <input type="password" id="register-password" name="password" required>
+        </div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+    <% } else { %>
+      <div class="form-container">
+        <h2>Welcome, <%= user.username %>!</h2>
+        <h2>Upload Image</h2>
+        <form action="/api/upload" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="upload-image">Image:</label>
+            <input type="file" id="upload-image" name="image" required>
+          </div>
+          <button type="submit">Upload</button>
+        </form>
       </div>
-      <button type="submit" class="btn">Submit</button>
-    </form>
-    <br>
-    <img src="<%= typeof file != 'undefined' ? file : '' %>" class="responsive-img">
+      <% } %>
   </div>
-  
-  <!-- Compiled and minified JavaScript - Materialize CSS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-  <!-- Jquery -->
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 </body>
 </html>
