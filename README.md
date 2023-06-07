@@ -1,6 +1,5 @@
 # FacialBot
-> API untuk menjalankan aplikasi FacialBot dan upload gambar dari gallery
-> API to run the FacialBot application and upload images from the gallery
+> API untuk menjalankan aplikasi FacialBot dan upload gambar dari gallery (API to run the FacialBot application and upload images from the gallery)
 
 ## Endpoint
 [Github FacialBot API](https://github.com/Capstone-C23-PC612-FacialBot/FacialBot-CC-API.git)
