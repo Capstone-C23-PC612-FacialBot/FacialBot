@@ -51,3 +51,9 @@
   + `photo` as `file`, no limited File Size
 
 - Response
+```ruby
+{
+  msg: 'File telah diupload!',
+  file: publicUrl,
+}
+```
