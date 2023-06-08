@@ -18,3 +18,19 @@
  
  - Response
  
+ ```ruby
+ {"message":"Registrasi Berhasil!"}
+ ```
+
+## Login
+- URL
+  + `/login`
+
+- Method
+  + POST
+
+- Request Body
+  + `email` as `string`
+  + `password` as `string`
+ 
+- Response
