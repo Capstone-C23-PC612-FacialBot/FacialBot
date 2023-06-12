@@ -27,11 +27,11 @@ def predict_image():
     try:
         # Connect to the Cloud SQL database
         connection = mysql.connector.connect(
-            host='34.101.196.0',
+            host='YOUR_PUBLIC_IP',
             port='3306',
             database='testapiv2',
             user='root',
-            password='anwari123'
+            password='YOUR_PASSWORD'
         )
 
         # Retrieve the latest image URL from the Cloud SQL database
