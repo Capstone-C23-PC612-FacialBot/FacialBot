@@ -86,7 +86,7 @@ function authRoutes(pool) {
       }
       
       // generate token
-      const token = jwt.sign({username: user.username}, secretKey, {expiresIn: '1h'});
+      const token = jwt.sign({username: user.username}, secretKey, {expiresIn: '1d'});
 
       // Respon token ke user
       return res.json({token: token});
