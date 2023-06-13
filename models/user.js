@@ -8,6 +8,11 @@ class User {
     const saltRounds = 15;
 
     try {
+      // validasi password
+      if (password.length < 8) {
+        throw new Error('Password harus memiliki minimal 8 karakter');
+      }
+      
       // Penggunaan Garam pada password
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);
