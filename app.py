@@ -69,7 +69,7 @@ def predict_image():
         # Logic for prediction result
         classes = np.array(['Actinic Keratosis', 'Basa Cell Carcinoma', 'Eksim', 'Flek Hitam','Herpes', 'Kerutan', 'Milia', 'Rosacea', 'Vitiligo', 'jerawat'])
         preds = classes[label_preds]
-        return jsonify({'prediction': preds})
+        return jsonify({'prediction': preds, 'bbox': box_preds})
 
     except Exception as e:
         print('Error processing image:', e)
