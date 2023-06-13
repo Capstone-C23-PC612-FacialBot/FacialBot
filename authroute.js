@@ -5,6 +5,29 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+
+const secretKey = 'example_key';
+
+// Middleware untuk authentikasi token
+const verifyToken = (req, res, next) => {
+  // const token = req.headers['authorization'];
+  const token = req.cookies.token; // menambahkan cookis token
+  
+  if (!token) {
+    return res.status(401).json({message: 'Token tidak tersedia'});
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({message: 'Token tidak valid'});
+    }
+
+    req.user = decoded;
+    next();
+  });
+}
+
 // User model, untuk memyimpan kredensial ke database
 function authRoutes(pool) {
   const User = require('./models/user');
@@ -61,6 +84,12 @@ function authRoutes(pool) {
         res.status(401).json({message: 'Username atau Password salah'});
         return;
       }
+      
+      // generate token
+      const token = jwt.sign({username: user.username}, secretKey, {expiresIn: '1h'});
+
+      // Respon token ke user
+      return res.json({token: token});
 
       // Set user saat sesi saat ini
       req.session.user = user;
@@ -71,6 +100,12 @@ function authRoutes(pool) {
       console.error(error);
       res.status(500).json({message: 'Server internal sedang bermasalah, coba lagi dalam beberapa saat'});
     }
+  });
+  
+  // Endpoint yang membutuhkan autentikasi token
+  // Ini laman terproteksi yang memerlukan auth token 
+  router.get('/protected', verifyToken, (req, res) => {
+    return res.json({message: 'Halaman terproteksi, Selamat datang ' + req.user.username});
   });
 
   return router;
