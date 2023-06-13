@@ -4,10 +4,12 @@ const session = require('express-session');
 const routes = require('./authroute');
 const path = require('path');
 const pool = require('./models/connect');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 // Set up sesi middleware
 app.use(
