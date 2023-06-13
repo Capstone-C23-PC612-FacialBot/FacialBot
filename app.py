@@ -14,7 +14,9 @@ def preprocess_image(image_base64):
     # Logic to preprocess the image
     # Example: preprocessed_image = ...
     # Return the preprocessed image
-    return preprocess_image
+    image_array = np.array(image_base64)
+    image_array = np.expand_dims(image_array, axis=0)
+    return image_array
 
 # Function to load the model
 def load_model(model_path):
@@ -44,27 +46,30 @@ def predict_image():
             return jsonify({'error': 'Image not found'})
 
         image_url = result[0]
-
         # Fetch the image data from Cloud Storage
         response = request.get(image_url)
         image_data = response.content
 
         # Convert the image data to a PIL Image object
         image_base64 = base64.b64encode(image_data).decode('utf-8')
+        image_bytes = io.BytesIO(base64.b64decode(image_base64))
+        image_base64 = Image.open(image_bytes).resize((150,150))
 
         # Preprocess the image
         preprocessed_image = preprocess_image(image_base64)
 
         # Load the model
-        model = load_model('model.h5')
+        model = load_model('model1.h5')
 
         # Perform prediction on the preprocessed image
-        prediction = model.predict(np.array([preprocessed_image]))
+        box_preds, label_preds = model.predict(preprocessed_image)
+        label_preds = np.argmax(label_preds, axis=1)[0]
+        box_preds = box_preds[0]
 
         # Logic for prediction result
-        # ...
-
-        return jsonify({'prediction': prediction})
+        classes = np.array(['Actinic Keratosis', 'Basa Cell Carcinoma', 'Eksim', 'Flek Hitam','Herpes', 'Kerutan', 'Milia', 'Rosacea', 'Vitiligo', 'jerawat'])
+        preds = classes[label_preds]
+        return jsonify({'prediction': preds})
 
     except Exception as e:
         print('Error processing image:', e)
