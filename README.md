@@ -12,7 +12,7 @@
   + POST
 
 - Request Body
-  + `name` as `string`
+  + `username` as `string`
   + `email` as `string`, must be unique
   + `password` as `string`, at least 8 characters
  
