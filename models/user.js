@@ -2,6 +2,8 @@
 const bcrypt = require('bcrypt');
 const connection = require('./connect');
 
+const {v4: uuidv4} = require('uuid');
+
 class User {
   static async registrasiUser(username, email, password) {
     // Banyaknya Garam buat password menjadi hashed password
@@ -12,16 +14,26 @@ class User {
       if (password.length < 8) {
         throw new Error('Password harus memiliki minimal 8 karakter');
       }
-      
+
+      // generate user ID unik
+      const userId = uuidv4();
+
       // Penggunaan Garam pada password
       const salt = await bcrypt.genSalt(saltRounds);
       const hashedPassword = await bcrypt.hash(password, salt);
       // eslint-disable-next-line max-len
-      const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+      const query = 'INSERT INTO users (id_user, username, email, password) VALUES (?, ?, ?, ?)';
       // Yang dimasukkan ke database adalah password dengan garam
-      const params = [username, email, hashedPassword];
+      const params = [userId, username, email, hashedPassword];
 
       await connection.query(query, params);
+
+      // response JSON sukses dengan user ID
+      return {
+        success: true,
+        message: 'Registrasi berhasil',
+        loginResult: userId,
+      };
     } catch (error) {
       console.error('Pembuatan user error', error);
       throw error;
@@ -44,7 +56,7 @@ class User {
     }
   }
 
-  // Agar bisa login dengan username yang telah diregistrasikan
+  // Agar bisa login dengan username / email yang telah diregistrasikan
   static async loginEmail(email) {
     const query = 'SELECT * FROM users WHERE email = ?';
     const params = [email];
