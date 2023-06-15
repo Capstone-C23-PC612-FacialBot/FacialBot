@@ -5,10 +5,12 @@ const routes = require('./authroute');
 const path = require('path');
 const pool = require('./models/connect');
 const cookieParser = require('cookie-parser');
+const {createProxyMiddleware} = require('http-proxy-middleware');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(cookieParser());
 
 // Set up sesi middleware
@@ -43,7 +45,7 @@ const uploadRoute = require('./uploadroute');
 app.use('/api', uploadRoute);
 
 // Ganti Port sesuai selera
-const port = 3000;
+const port = 8080;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -1,10 +1,10 @@
 const {createPool} = require('mysql2/promise');
 
 const pool = createPool({
-  host: 'YOUR_MYSQL_PUBLIC_IP',
+  host: 'YOUR_CLOUDSQL_EXTERNAL_IP',
   user: 'root',
-  password: 'YOUR_MYSQL_PASSWORD',
-  database: 'YOUR_MYSQL_DATABASE',
+  password: 'YOUR_CLOUDSQL_PASSWORD',
+  database: 'YOUR_CLOUDSQL_DATABASE',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

@@ -29,11 +29,11 @@ def predict_image():
     try:
         # Connect to the Cloud SQL database
         connection = mysql.connector.connect(
-            host='YOUR_IP',
+            host='34.101.146.65',
             port='3306',
             database='apiV1',
             user='root',
-            password='YOUR_PASSWORD'
+            password='1234509876'
         )
 
         # Retrieve the latest image URL from the Cloud SQL database
@@ -76,4 +76,4 @@ def predict_image():
         return jsonify({'error': 'Image processing failed'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

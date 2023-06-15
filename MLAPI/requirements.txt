@@ -1,8 +1,6 @@
 Flask
 numpy
-grpcio-tools
-h5py
 Pillow
 keras
-tensorflow-gpu==2.10.1
+tensorflow
 mysql-connector-python

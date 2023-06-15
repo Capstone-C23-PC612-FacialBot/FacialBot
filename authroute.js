@@ -5,7 +5,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
+
 const jwt = require('jsonwebtoken');
+
 const secretKey = 'example';
 
 

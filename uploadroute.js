@@ -7,16 +7,16 @@ const multer = require('multer');
 // Membuat instansi baru dari StorageClass
 // dan kredensial yang dibutuhkan agar bisa upload di google storage
 const storage = new Storage({
-  projectId: 'YOUR_PROJECTID',
+  projectId: 'YOUR_PROJECT_ID',
   credentials: {
     type: 'YOUR_ACCOUNT_TYPE',
-    private_key: 'YOUR_PRIVATE_KEY',
-    client_email: 'YOUR_SERVICE_ACCOUNT_EMAIL',
+    private_key: 'YOUR_ACCOUNT_PRIVATE_KEY',
+    client_email: 'YOUR_ACCOUNT_EMAIL',
   },
 });
 
-// Nama bucket (Dibawah ini bucket testing)
-const NamaBucket = 'YOUR_CLOUD_STORAGE_BUCKET';
+// Nama bucket
+const NamaBucket = 'YOUR_CLOUD_BUCKET';
 
 // Set up Multer sebagai middleware upload gambar
 const multerstr = multer.memoryStorage();
@@ -31,15 +31,15 @@ const multerupl = multer({
 });
 
 // eslint-disable-next-line new-cap
-const router = express.Router();
+const uploadroute = express.Router();
 
 // Endpoints setelah login
-router.get('/', (req, res) => {
+uploadroute.get('/', (req, res) => {
   res.render('index', {user: req.session.user});
 });
 
 // Endpoints saat Upload gambar
-router.post('/upload', multerupl.single('image'), async (req, res) => {
+uploadroute.post('/upload', multerupl.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.render('index', {
@@ -92,4 +92,4 @@ router.post('/upload', multerupl.single('image'), async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = uploadroute;
