@@ -5,9 +5,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
-
 const jwt = require('jsonwebtoken');
-
 const secretKey = 'example';
 
 
@@ -64,12 +62,12 @@ function authRoutes(pool) {
 
   // Login Endpoint
   router.post('/login', async (req, res) => {
-    const {username, password} = req.body;
+    const {identifier, password} = req.body;
 
     try {
       // Cek Email atau Username ada di database
       const query = 'SELECT * FROM users WHERE username = ? OR email = ?';
-      const params = [username, username];
+      const params = [identifier, identifier];
       const [cekUser] = await pool.query(query, params);
       const user = cekUser ? cekUser[0] : null;
 
