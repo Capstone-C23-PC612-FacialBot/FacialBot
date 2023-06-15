@@ -57,3 +57,51 @@
   file: publicUrl,
 }
 ```
+
+## Flask Image Prediction API
+
+> This is a Flask API that performs image prediction using a pre-trained model. It fetches an image from a Cloud SQL database, preprocesses it, and then passes it through the model for prediction.
+
+### Instalation
++ Clone the repository
++ Open a terminal and navigate to the repository directory
++ Install the required dependencies by running the following command
+
+```
+python app.py
+```
+
+The application will run on `http://localhost:3000`
+
+Endpoint
++ `/predict`  [POST]: Predicts the class label and bounding box of an image. Request body should contain the base64 encoded image in the following format:
+```ruby
+{
+  "image": "base64_encoded_image"
+}
+```
+
+Example request using cURL :
+```ruby
+curl -X POST -H "Content-Type: application/json" -d '{"image": "base64_encoded_image"}' http://localhost:3000/predict
+```
+
+Example response :
+```ruby
+{
+  "prediction": "Actinic Keratosis",
+  "bbox": [0.1, 0.2, 0.3, 0.4]
+}
+```
+
+Replace `base64_encoded_image` with the actual base64 encoded image you want to predict.
+
+### Contributing
+Contributions from the community are welcome. If you would like to contribute to this project, please follow these steps:
+
++ Fork this repository.
++ Create a new branch: `git checkout -b new-feature`.
++ Make the necessary changes and commit: `git commit -am 'Add new feature'`.
++ Push to the newly created branch: `git push origin new-feature`.
++ Create a pull request in this repository.
+
