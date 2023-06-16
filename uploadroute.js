@@ -1,55 +1,44 @@
-/* eslint-disable max-len */
 const express = require('express');
 const {Storage} = require('@google-cloud/storage');
 const pool = require('./models/connect');
 const multer = require('multer');
 
-// Membuat instansi baru dari StorageClass
-// dan kredensial yang dibutuhkan agar bisa upload di google storage
+// Create a new instance of the Storage class
+// with the necessary credentials for uploading to Google Cloud Storage
 const storage = new Storage({
   projectId: 'YOUR_PROJECT_ID',
   credentials: {
-    type: 'YOUR_ACCOUNT_TYPE',
-    private_key: 'YOUR_ACCOUNT_PRIVATE_KEY',
-    client_email: 'YOUR_ACCOUNT_EMAIL',
+    type: 'YOUR_SERVICE_ACCOUNT_NAME',
+    private_key: 'YOUR_PRIVATE_KEY',
+    client_email: 'YOUR_SERVICE_ACCOUNT_EMAIL',
   },
 });
 
-// Nama bucket
-const NamaBucket = 'YOUR_CLOUD_BUCKET';
+// Bucket name (replace with your own bucket name)
+const bucketName = 'YOUR_CLOUD_STORAGE_BUCKET';
 
-// Set up Multer sebagai middleware upload gambar
-const multerstr = multer.memoryStorage();
-const multerupl = multer({
-  storage: multerstr,
+// Set up Multer as the image upload middleware
+const multerStorage = multer.memoryStorage();
+const multerUpload = multer({
+  storage: multerStorage,
   fileFilter: (req, file, callback) => {
+    // eslint-disable-next-line max-len
     if (file.mimetype !== 'image/png' && file.mimetype !== 'image/jpg' && file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/gif') {
-      return callback(new Error('Error: Hanya bisa upload gambar!'));
+      return callback(new Error('Error: Only image files are allowed!'));
     }
     callback(null, true);
   },
 });
 
 // eslint-disable-next-line new-cap
-const uploadroute = express.Router();
+const uploadRouter = express.Router();
 
-// Endpoints setelah login
-uploadroute.get('/', (req, res) => {
-  res.render('index', {user: req.session.user});
-});
-
-// Endpoints saat Upload gambar
-uploadroute.post('/upload', multerupl.single('image'), async (req, res) => {
+// Endpoint for uploading an image
+uploadRouter.post('/upload', multerUpload.single('image'), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.render('index', {
-        msg: 'Error: Silahkan pilih file gambar terlebih dahulu!',
-      });
-    }
-
-    const bucket = storage.bucket(NamaBucket);
-    const originalname = req.file.originalname;
-    const blob = bucket.file('userimage/' + originalname);
+    const bucket = storage.bucket(bucketName);
+    const originalName = req.file.originalname;
+    const blob = bucket.file('userimage/' + originalName);
 
     const blobStream = blob.createWriteStream({
       resumable: false,
@@ -58,12 +47,12 @@ uploadroute.post('/upload', multerupl.single('image'), async (req, res) => {
     blobStream.on('error', (err) => {
       console.error(err);
       // eslint-disable-next-line max-len
-      return res.status(500).json({error: 'Server error. Coba dalam beberapa saat lagi'});
+      return res.status(500).json({error: 'Server error. Please try again later.'});
     });
 
     blobStream.on('finish', async () => {
-      // Nama bucket -> userimage(bisa diganti sesuai cloud storage) -> namafile
-      const publicUrl = `https://storage.googleapis.com/${NamaBucket}/userimage/${originalname}`;
+      // Construct the public URL of the uploaded image
+      const publicUrl = `https://storage.googleapis.com/${bucketName}/userimage/${originalName}`;
 
       // Insert the public URL into the Cloud SQL database
       const query = 'INSERT INTO images (url) VALUES (?)';
@@ -74,22 +63,26 @@ uploadroute.post('/upload', multerupl.single('image'), async (req, res) => {
       const userId = req.session.userId;
 
       // Update the user's image URL in the users table
-      // eslint-disable-next-line max-len
       const updateUserImageQuery = 'UPDATE users SET image_id = ? WHERE id = ?';
       const updateUserImageParams = [publicUrl, userId];
       await pool.query(updateUserImageQuery, updateUserImageParams);
 
-      return res.render('index', {
-        msg: 'File telah diupload!',
-        file: publicUrl,
-      });
+      const response = {
+        statusCode: 200,
+        data: {
+          message: 'Upload successful!',
+          file: publicUrl,
+        },
+      };
+
+      return res.status(200).json(response);
     });
 
     blobStream.end(req.file.buffer);
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: 'Server error. Coba dalam beberapa saat lagi'});
+    res.status(500).json({error: 'Server error. Please try again later.'});
   }
 });
 
-module.exports = uploadroute;
+module.exports = uploadRouter;

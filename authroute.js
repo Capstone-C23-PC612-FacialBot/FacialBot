@@ -5,7 +5,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
-
 const jwt = require('jsonwebtoken');
 
 const secretKey = 'example';
@@ -24,7 +23,8 @@ function authRoutes(pool) {
       const query = 'SELECT * FROM users WHERE username = ? OR email = ?';
       const params = [username, email];
       const [cekUser] = await pool.query(query, params);
-      const rows = cekUser ? cekUser : [];
+      const rows = cekUser || [];
+
 
       console.log(cekUser);
 
